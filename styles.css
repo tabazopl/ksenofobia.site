@@ -1,0 +1,148 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+.top-menu {
+  background-color: #4a4a4a;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-menu h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.btn:first-child {
+  background-color: #28a745;
+}
+
+.btn:last-child,
+.btn {
+  background-color: #007bff;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.comment-input {
+  background-color: #6c757d;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.comment-input h3 {
+  margin: 0 0 10px;
+}
+
+.comment-input textarea {
+  width: 100%;
+  height: 60px;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: none;
+  resize: none;
+}
+
+.comment-input button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.char-count {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.comment {
+  display: flex;
+  align-items: center;
+  background-color: #6c757d;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.comment img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.comment p {
+  margin: 0;
+}
+
+#load-more {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Styles for Dokumentacja page */
+.content-box {
+  background-color: #6c757d;
+  color: white;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.content-box h2 {
+  margin: 0 0 20px;
+}
+
+.content-box ul {
+  list-style-type: none;
+  padding: 0;
+  text-align: left;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.content-box li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
