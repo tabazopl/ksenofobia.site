@@ -31,10 +31,7 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.btn:first-child {
-  background-color: #28a745;
-}
-
+.btn:first-child,
 .btn:last-child,
 .btn {
   background-color: #007bff;
@@ -73,6 +70,22 @@ body {
   resize: none;
 }
 
+.comment-input input[type="text"],
+.comment-input input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 10px;
+}
+
+.comment-input label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+}
+
 .comment-input button {
   background-color: #007bff;
   color: white;
@@ -95,7 +108,7 @@ body {
   color: white;
   padding: 15px;
   border-radius: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
 }
 
 .comment img {
@@ -145,4 +158,16 @@ body {
 .content-box li {
   margin-bottom: 10px;
   font-size: 16px;
+}
+
+/* Styles for Admin Panel */
+.comments-section-admin .comment {
+  background-color: #4a4a4a;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.comments-section-admin .comment input[type="checkbox"] {
+  margin-right: 10px;
 }

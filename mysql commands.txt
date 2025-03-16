@@ -1,0 +1,37 @@
+###########################################################
+
+
+  Komendy mysql by stworzyć wymagane kolumny.
+
+
+
+###########################################################
+USE twojabazadanych;
+
+-- Tworzenie tabeli comments (jeśli jeszcze nie istnieje)
+CREATE TABLE IF NOT EXISTS comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,         -- Unikalny identyfikator komentarza
+    content VARCHAR(128) NOT NULL,             -- Treść komentarza (max 128 znaków)
+    created_at DATETIME NOT NULL,              -- Data i czas dodania komentarza
+    liked TINYINT(1) DEFAULT 0,                -- Czy komentarz został polubiony (0 = nie, 1 = tak)
+    username VARCHAR(50) DEFAULT 'ksenofob'    -- Nazwa użytkownika (domyślnie 'ksenofob' lub 'ADMIN')
+);
+
+################
+ALTER TABLE comments ADD COLUMN liked TINYINT(1) DEFAULT 0; -- system polubionych komentarzy
+################
+ALTER TABLE comments ADD COLUMN username VARCHAR(50) DEFAULT 'ksenofob';
+###############
+-- Tworzenie bazy danych (jeśli jeszcze nie istnieje)
+CREATE DATABASE IF NOT EXISTS twojabazadanych;
+USE twojabazadanych;
+
+-- Tworzenie tabeli admin_users
+CREATE TABLE IF NOT EXISTS admin_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+-- Wstawianie przykładowego użytkownika (login: admin, hasło: admin123)
+INSERT INTO admin_users (username, password) VALUES ('admin', 'admin123'); ---- zastąp 'admin' swoim loginem a 'admin123' swoim hasłem
