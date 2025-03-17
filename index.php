@@ -12,6 +12,38 @@ session_start(); // Start the session
         .admin-username {
             color: #FFD700; /* Złoty kolor dla "ADMIN" */
         }
+        .top-menu {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        @media (max-width: 600px) {
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 80%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -47,19 +79,17 @@ session_start(); // Start the session
     <script src="script.js?v=<?php echo time(); ?>"></script>
     <script>
         document.getElementById('commentForm').addEventListener('submit', function(event) {
-            // Prevent default form submission to handle it with PHP first
             event.preventDefault();
             fetch(window.location.href, {
                 method: 'POST',
                 body: new FormData(this)
             }).then(response => {
                 if (response.ok) {
-                    location.reload(); // Reload the page after successful submission
+                    location.reload();
                 }
             });
         });
 
-        // Update character count
         const textarea = document.querySelector('textarea[name="comment"]');
         const charCount = document.querySelector('.char-count');
         textarea.addEventListener('input', function() {

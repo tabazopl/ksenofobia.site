@@ -1,41 +1,84 @@
 <?php
 session_start(); // Start the session
 
-// Funkcja do generowania i zarządzania user ID
 function getUserId() {
-    // Sprawdź, czy user_id i timestamp istnieją w sesji
     if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_id_timestamp'])) {
-        // Utwórz unikalny ID na podstawie session ID i losowej liczby
-        $sessionUniquePart = substr(md5(session_id()), 0, 5); // Pierwsze 5 znaków z MD5 session ID
-        $randomPart = rand(10000, 99999); // Losowa 5-cyfrowa liczba
-        $_SESSION['user_id'] = 'ksenofob' . $sessionUniquePart . $randomPart;
+        $sessionUniquePart = substr(md5(session_id() . microtime()), 0, 5);
+        $randomPart = rand(10000, 99999);
+        $_SESSION['user_id'] = 'ksenofob-' . $sessionUniquePart . $randomPart;
         $_SESSION['user_id_timestamp'] = time();
     } else {
-        // Sprawdź, czy minęło 15 minut (900 sekund)
         $currentTime = time();
         $lastGenerated = $_SESSION['user_id_timestamp'];
         if (($currentTime - $lastGenerated) >= 900) {
-            // Minęło 15 minut, wygeneruj nowy ID
-            $sessionUniquePart = substr(md5(session_id()), 0, 5);
+            $sessionUniquePart = substr(md5(session_id() . microtime()), 0, 5);
             $randomPart = rand(10000, 99999);
-            $_SESSION['user_id'] = 'ksenofob' . $sessionUniquePart . $randomPart;
+            $_SESSION['user_id'] = 'ksenofob-' . $sessionUniquePart . $randomPart;
             $_SESSION['user_id_timestamp'] = $currentTime;
         }
     }
     return $_SESSION['user_id'];
 }
 
-// Połączenie z bazą danych MariaDB
+// Funkcja do walidacji i parsowania linków do obrazów
+function parseCommentContent($content) {
+    // Wzór do wykrywania <link href="...">
+    $pattern = '/<link href="([^"]+)">/';
+    $content = htmlspecialchars($content, ENT_QUOTES, 'UTF-8'); // Zabezpieczenie przed XSS
+    preg_match_all($pattern, $content, $matches);
+
+    if (!empty($matches[1])) {
+        foreach ($matches[1] as $index => $url) {
+            $errorMessage = '';
+            $isValid = false;
+
+            // Sprawdź, czy URL zaczyna się od /src/online
+            if (strpos($url, '/src/online') === 0) {
+                $isValid = true;
+                $fullPath = $_SERVER['DOCUMENT_ROOT'] . $url;
+                if (!file_exists($fullPath) || !is_readable($fullPath)) {
+                    $errorMessage = '[Błąd: Plik nie istnieje lub nie można go odczytać]';
+                    $isValid = false;
+                }
+            }
+            // Sprawdź, czy URL jest publiczny (http lub https)
+            elseif (preg_match('/^https?:\/\//', $url)) {
+                $isValid = true;
+                // Walidacja za pomocą getimagesize dla publicznych URL
+                $imageInfo = @getimagesize($url);
+                if ($imageInfo === false) {
+                    $errorMessage = '[Błąd: Nieprawidłowy obraz lub niedostępny URL]';
+                    $isValid = false;
+                }
+            } else {
+                $errorMessage = '[Błąd: Niedozwolony format linku]';
+            }
+
+            if ($isValid) {
+                // Zamień <link href="..."> na <img> z ograniczeniem rozmiaru
+                $imgTag = '<img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" alt="Comment Image" style="max-width: 128px; max-height: 128px; object-fit: contain; vertical-align: middle;">';
+                $content = str_replace($matches[0][$index], $imgTag, $content);
+            } else {
+                $content = str_replace($matches[0][$index], $errorMessage, $content);
+            }
+        }
+    }
+    return $content;
+}
+
 $host = 'localhost';
 $dbname = 'DatabaseName';
 $username = 'login';
 $password = 'Databasepassword';
-
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Obsługa dodawania nowego komentarza
+    // Włącz raportowanie błędów dla debugowania
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment'])) {
         $comment = trim($_POST['comment']);
         if (!empty($comment) && strlen($comment) <= 128) {
@@ -44,25 +87,22 @@ try {
         }
     }
 
-    // Pobierz user ID
     $userId = getUserId();
 
-    // Pobranie 5 ostatnich komentarzy
     $stmt = $pdo->query("SELECT * FROM comments ORDER BY created_at DESC LIMIT 5");
     $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($comments as $row) {
         echo '<div class="comment">';
-        // Temporarily remove image to avoid network error
-        // echo '<img src="https://via.placeholder.com/50" alt="Profile Pic">';
         $displayUsername = ($row['username'] === 'ADMIN') ? '<strong class="admin-username">ADMIN</strong>' : '<strong>' . htmlspecialchars($userId) . '</strong>';
-        echo '<p>' . $displayUsername . ': ' . htmlspecialchars($row['content']);
+        $parsedContent = parseCommentContent($row['content']);
+        echo '<p>' . $displayUsername . ': ' . $parsedContent;
         if ($row['liked'] == 1) {
-            echo ' <span style="color: red;">♥</span>'; // Serduszko dla polubionych komentarzy
+            echo ' <img src="skull_heart.png" alt="Liked" style="width: 20px; height: 20px; vertical-align: middle;">';
         }
         echo '</p>';
-        // Dodaj datę i godzinę w formacie "godzina:minuta dzień-miesiąc-rok" z czasem polskim
         $dateTime = new DateTime($row['created_at'], new DateTimeZone('Europe/Warsaw'));
+        $dateTime->modify('+1 hour');
         $formattedDate = $dateTime->format('H:i d-m-Y');
         echo '<small style="display:block; margin-left: 10px;">Wstawiono: ' . htmlspecialchars($formattedDate) . '</small>';
         echo '</div>';
