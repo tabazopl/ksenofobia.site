@@ -8,16 +8,18 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 // Dane do połączenia z bazą danych komentarzy
-$host_comments = 'localhost';
-$dbname_comments = 'urdatabase';
-$username_comments = 'username';
-$password_comments = 'password';
+$host = 'host';
+$dbname = 'database';
+$username = 'login';
+$password = 'password';
+
 
 // Dane do połączenia z bazą danych login (dla wylogowania)
-$host_login = 'localhost';
-$dbname_login = 'DatabaseName';
-$username_login = 'login';
-$password_login = 'Databasepassword';
+$host = 'host';
+$dbname = 'database';
+$username = 'login';
+$password = 'password';
+
 
 function parseCommentContent($content) {
     $pattern = '/<link href="([^"]+)">/';

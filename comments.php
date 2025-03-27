@@ -66,10 +66,12 @@ function parseCommentContent($content) {
     return $content;
 }
 
-$host = 'localhost';
-$dbname = 'DatabaseName';
+$host = 'host';
+$dbname = 'database';
 $username = 'login';
-$password = 'Databasepassword';
+$password = 'password';
+
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
